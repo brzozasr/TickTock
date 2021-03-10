@@ -8,17 +8,20 @@ namespace TickTock
     {
         static void Main(string[] args)
         {
-            var clock1 = new WallClocks(9, 59, 50);
-            var clock2 = new WallClocks(9, 59, 50);
-            var clock3 = new WallClocks(23, 59, 55);
-            
+            ClockShop shop = new ClockShop();
+            var clocks= shop.GenerateClocks(15);
+
+            int i = 1;
             while (true)
             {
                 Console.Clear();
-                clock1.ReadTime();
-                clock2.ReadTime();
-                clock3.ReadTime();
+                foreach (var (hash, clock) in clocks)
+                {
+                    clock.ReadTime(i);
+                    i++;
+                }
                 Thread.Sleep(1000);
+                i = 1;
             }
         }
     }
