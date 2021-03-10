@@ -1,0 +1,58 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+abstract class Clock
+{
+    + int Hour
+    + int Minute
+    + int Second
+    # {abstract} string Sound
+    - int Millisecond
+    - readonly int _delay
+    + void SetTime(int hour, int minute, int second)
+    + void ReadTime(int no)
+    - void UpdateTimeFromTicks()   
+}
+
+class Watch
+{
+    + readonly ConsoleColor Color
+    # override string Sound
+}
+
+class AlarmClock
+{
+    + TimeSpan? Alarm
+    # override string Sound
+    + void SetAlarm(int hour, int minute, int second)
+    + TimeSpan HowMuchTimeLeftToSleep()
+    + bool RunAlarm()
+}
+
+class WallClocks
+{
+    # override string Sound
+}
+
+class BigBen
+{
+    # override string Sound
+    - static Lazy<BigBen> _bigBen
+    - static readonly object Lock
+    + {static} BigBen GetInstance(int hour, int minute, int second)
+}
+
+class ClockShop
+{
+    - Dictionary<int, Clock> _clocks;
+    + Dictionary<int, Clock> GenerateClocks(int noOfClocks)
+}
+
+ClockShop o-- Clock
+
+Clock <|-- AlarmClock
+Clock <|-- WallClocks
+Clock <|-- Watch
+Clock <|-- BigBen
+
+@enduml

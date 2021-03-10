@@ -6,12 +6,11 @@ namespace TickTock.Clocks
 {
     public abstract class Clock
     {
-        protected int Hour { get; private set; }
-        protected int Minute { get; private set; }
-        protected int Second { get; private set; }
-
-        private int Millisecond { get; set; }
+        public int Hour { get; private set; }
+        public int Minute { get; private set; }
+        public int Second { get; private set; }
         protected abstract string Sound { get; }
+        private int Millisecond { get; set; }
 
         private readonly int _delay = Utils.Random.Next(-100000, 100001); // 10 millisecond
 
@@ -24,13 +23,9 @@ namespace TickTock.Clocks
 
         public void SetTime(int hour, int minute, int second)
         {
-            var h = TimeSpan.FromHours(hour);
-            var m = TimeSpan.FromMinutes(minute);
-            var s = TimeSpan.FromSeconds(second);
-
-            Hour = h.Hours;
-            Minute = m.Minutes;
-            Second = s.Seconds;
+            Hour = hour;
+            Minute = minute;
+            Second = second;
         }
 
         public void ReadTime(int no)
@@ -43,7 +38,7 @@ namespace TickTock.Clocks
             TimeSpan time = h.Add(m).Add(s);
 
             string sound = null;
-            if (m.Minutes == 0 && s.Seconds == 0)
+            if (Minute == 0 && Second == 0)
             {
                 sound = $", sound: {Sound}";
             }
@@ -59,6 +54,21 @@ namespace TickTock.Clocks
                 Console.ForegroundColor = watch.Color;
                 Console.WriteLine($"{newNo, -4}{clockName, -15} {time}{sound}");
                 Console.ResetColor();
+            }
+            else if (this is AlarmClock alarmClock && alarmClock.RunAlarm() is var runAlarm)
+            {
+                if (runAlarm)
+                {
+                    Console.WriteLine($"{newNo, -4}{clockName, -15} {time}{sound}, alarm {Sound}");
+                }
+                else if (alarmClock.Alarm != null)
+                {
+                    Console.WriteLine($"{newNo, -4}{clockName, -15} {time}{sound}, alarm left {alarmClock.HowMuchTimeLeftToSleep()}");
+                }
+                else
+                {
+                    Console.WriteLine($"{newNo, -4}{clockName, -15} {time}{sound}");
+                }
             }
             else
             {

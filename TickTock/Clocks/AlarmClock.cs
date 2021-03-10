@@ -4,9 +4,9 @@ namespace TickTock.Clocks
 {
     public class AlarmClock : Clock
     {
+        public TimeSpan? Alarm { get; private set; }
         protected override string Sound { get; } = "Buzzz";
-        protected TimeSpan? Alarm;
-        
+
         public AlarmClock(int hour, int minute, int second) : base(hour, minute, second)
         {
         }
@@ -18,13 +18,24 @@ namespace TickTock.Clocks
 
         public TimeSpan HowMuchTimeLeftToSleep()
         {
-            var timeNow = DateTime.Now.TimeOfDay;
+            var clockTime = new TimeSpan(Hour, Minute, Second);
             TimeSpan result = default;
             if (Alarm.HasValue)
             {
-                result = Alarm.Value.Subtract(timeNow);
+                result = Alarm.Value.Subtract(clockTime);
             }
             return result;
+        }
+
+        public bool RunAlarm()
+        {
+            if (Alarm.HasValue && Alarm.Value.Hours == Hour && Alarm.Value.Minutes == Minute && Alarm.Value.Seconds == Second)
+            {
+                Alarm = null;
+                return true;
+            }
+
+            return false;
         }
     }
 }
